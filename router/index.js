@@ -3,12 +3,13 @@ const exampleController = require("../controller/exampleController");
 const routeSekolah = require("./sekolah");
 const routeKategori = require("./kategori");
 const routeAsisten = require("./asisten");
+const routeModul = require("./modul");
 const route = express.Router();
-
 
 route.get("/", exampleController.index);
 route.use("/kategori", routeKategori);
 route.use("/asisten", routeAsisten);
 route.use('/sekolah', routeSekolah);
+route.use('/modul', routeModul);
 
 module.exports = route;
