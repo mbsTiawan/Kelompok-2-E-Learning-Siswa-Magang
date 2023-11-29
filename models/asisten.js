@@ -12,9 +12,14 @@ module.exports = (sequelize, DataTypes) => {
       Asisten.hasMany(models.Siswa, {
         foreignKey: "id_asisten",
       });
+      
       Asisten.hasMany(models.Modul, {
         foreignKey: "id_asisten",
       });
+
+      Asisten.hasMany(models.Modul, {
+        foreignKey: 'id_asisten'
+      })
     }
   }
   Asisten.init(

@@ -44,7 +44,7 @@ kategoriController.getAll = async (req, res) => {
 
         if (getData.length === 0) {
             return res.status(404).json({
-                message: 'Tidak ada data yang sertedia !'
+                message: 'Tidak ada data yang tersedia !'
             })
         }
 
