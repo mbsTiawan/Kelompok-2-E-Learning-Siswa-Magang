@@ -12,18 +12,25 @@ module.exports = (sequelize, DataTypes) => {
       Asisten.hasMany(models.Siswa, {
         foreignKey: "id_asisten",
       });
-      
+
       Asisten.hasMany(models.Modul, {
         foreignKey: "id_asisten",
       });
 
       Asisten.hasMany(models.Modul, {
-        foreignKey: 'id_asisten'
-      })
+        foreignKey: "id_asisten",
+      });
     }
   }
   Asisten.init(
     {
+      id_user: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
       nim: DataTypes.STRING,
       nama: DataTypes.STRING,
       alamat: DataTypes.STRING,
