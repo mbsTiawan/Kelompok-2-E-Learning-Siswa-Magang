@@ -1,0 +1,51 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { User, Role } = require('../models');
+
+const authController = {};
+
+authController.login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({
+      where: { userName: username },
+      include: [{ model: Role, as: 'role' }],
+    });
+
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    const payload = { username: user.userName, role: user.role.nama_role };
+    const accessToken = jwt.sign(payload, 'your_secret_key', { expiresIn: '1h' });
+
+    res.json({
+      message: 'Login successful. Copy the following token to access based on your role:',
+      accessToken
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+authController.register = async (req, res) => {
+  try {
+    const { username, password, id_role } = req.body;
+
+    // Check if the user already exists
+    const existingUser = await User.findOne({ where: { userName: username } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Username is already taken' });
+    }
+
+    // Create a new user
+    const newUser = await User.create({ userName: username, password, id_role });
+
+    res.json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = authController;
