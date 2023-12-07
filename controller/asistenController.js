@@ -1,12 +1,27 @@
-const { Asisten } = require("../models");
+const { Asisten, User } = require("../models");
 
 const asistenController = {};
 
 asistenController.create = async (req, res) => {
-  const { nim, nama, alamat, kelas, no_hp, tanggal_masuk, shift, image } =
-    req.body;
+
   try {
+
+    const { id_user, nim, nama, alamat, kelas, no_hp, tanggal_masuk, shift, image } = req.body;
+
+    const findUser = await User.findOne({
+      where: {
+        id: id_user
+      }
+    })
+
+    if (!findUser) {
+      return res.status(404).json({
+        message: "Data user tidak ditemukan !",
+      });
+    }
+
     if (
+      !id_user ||
       !nim ||
       !nama ||
       !alamat ||
@@ -26,7 +41,7 @@ asistenController.create = async (req, res) => {
         nim: nim,
       },
     });
-    console.log(findAsisten);
+
     if (findAsisten) {
       return res.status(409).json({
         message: `NIM ${nim} sudah digunakan!`,
@@ -34,6 +49,7 @@ asistenController.create = async (req, res) => {
     }
 
     const createAsisten = await Asisten.create({
+      id_user,
       nim,
       nama,
       alamat,
@@ -46,9 +62,10 @@ asistenController.create = async (req, res) => {
 
     return res.status(201).json({
       message: "Data berhasil ditambahkan !",
+      data: createAsisten
     });
   } catch (error) {
-    console.log(error);
+
     return res.status(500).json({
       message: "Terjadi kesalahan pada server.",
     });
@@ -102,10 +119,11 @@ asistenController.getById = async (req, res) => {
 };
 
 asistenController.update = async (req, res) => {
-  const { nim, nama, alamat, kelas, no_hp, tanggal_masuk, shift, image } =
-    req.body;
-  const { id } = req.params;
   try {
+    const { id_user, nim, nama, alamat, kelas, no_hp, tanggal_masuk, shift, image } =
+      req.body;
+    const { id } = req.params;
+
     const getAsistenById = await Asisten.findOne({
       where: {
         id,
@@ -114,6 +132,18 @@ asistenController.update = async (req, res) => {
     if (getAsistenById === null) {
       return res.status(404).json({
         message: "Data Tidak Ditemukan!",
+      });
+    }
+
+    const findUser = await User.findOne({
+      where: {
+        id: id_user
+      }
+    })
+
+    if (!findUser) {
+      return res.status(404).json({
+        message: "Data user tidak ditemukan !",
       });
     }
 
@@ -134,6 +164,7 @@ asistenController.update = async (req, res) => {
 
     const updateAsisten = await Asisten.update(
       {
+        id_user,
         nim,
         nama,
         alamat,

@@ -85,7 +85,8 @@ modulController.upload = async (req, res) => {
             })
 
             return res.status(201).json({
-                message: 'Module berhasil diupload !'
+                message: 'Module berhasil diupload !',
+                data: createData
             })
         })
 

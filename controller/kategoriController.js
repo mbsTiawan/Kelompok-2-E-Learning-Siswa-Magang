@@ -49,7 +49,7 @@ kategoriController.getAll = async (req, res) => {
         }
 
         return res.status(200).json({
-            message: getData
+            data: getData
         })
     } catch (error) {
         return res.status(500).json({

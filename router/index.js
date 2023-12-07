@@ -1,22 +1,25 @@
 const express = require('express');
 const authController = require('../controller/authController');
+const exampleController = require("../controller/exampleController");
 const authRoutes = require('./auth');
 const routeSekolah = require('./sekolah');
 const routeKategori = require('./kategori');
 const routeAsisten = require('./asisten');
 const routeModul = require('./modul');
+const routeRole = require("./role");
+const routeSiswa = require("./siswa");
 const authMiddleware = require('../middleware/authMiddleware');
-
 const route = express.Router();
 
-route.get('/', (req, res) => res.send('Hello World'));
 route.use('/auth', authRoutes);
-
 route.use(authMiddleware.authenticateUser);
 
+route.get("/", exampleController.index);
 route.use('/sekolah', authMiddleware.authorizeRole('siswa'), routeSekolah);
 route.use('/kategori', authMiddleware.authorizeRole('admin'), routeKategori);
 route.use('/asisten', authMiddleware.authorizeRole('asisten'), routeAsisten);
 route.use('/modul', authMiddleware.authorizeRole('siswa'), routeModul);
+route.use('/role', routeRole);
+route.use('/siswa', routeSiswa);
 
 module.exports = route;
