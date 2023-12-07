@@ -1,16 +1,14 @@
 "use strict";
 const { Model } = require("sequelize");
+const bcrypt = require('bcrypt');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      User.belongsTo(models.Role, { foreignKey: 'id_role', as: 'role' });
     }
   }
+
   User.init(
     {
       id_role: {
@@ -30,5 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
+
+  User.addHook('beforeCreate', async (user) => {
+    // Generate and store password salt securely
+    const saltRounds = 10;
+    user.passwordSalt = await bcrypt.genSalt(saltRounds);
+    user.password = await bcrypt.hash(user.password, user.passwordSalt);
+  });
+
   return User;
 };
