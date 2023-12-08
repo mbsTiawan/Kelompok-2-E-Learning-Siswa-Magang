@@ -21,16 +21,43 @@ authMiddleware.authenticateUser = (req, res, next) => {
   }
 };
 
-authMiddleware.authorizeRole = (requiredRole) => {
+// authMiddleware.authorizeRole = (requiredRole) => {
+//   return async (req, res, next) => {
+//     const { user } = req;
+
+//     if (!user || user.role !== requiredRole) {
+//       return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
+//     }
+
+//     next();
+//   };
+// };
+
+// authMiddleware.authorizeRole = (...requiredRoles) => {
+//   return async (req, res, next) => {
+//     const { user } = req;
+
+//     console.log(user.role);
+//     if (!user || !requiredRoles.includes(user.role)) {
+//       return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
+//     }
+
+//     next();
+//   };
+// };
+
+authMiddleware.authorizeRole = (...requiredRoles) => {
   return async (req, res, next) => {
     const { user } = req;
 
-    if (!user || user.role !== requiredRole) {
+    console.log(user.role);
+    if (!user || !requiredRoles.some(role => user.role === role)) {
       return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
     }
 
     next();
   };
 };
+
 
 module.exports = authMiddleware;
