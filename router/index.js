@@ -15,10 +15,11 @@ route.use('/auth', authRoutes);
 route.use(authMiddleware.authenticateUser);
 
 route.get("/", exampleController.index);
-route.use('/sekolah', authMiddleware.authorizeRole('siswa'), routeSekolah);
-route.use('/kategori', authMiddleware.authorizeRole('admin'), routeKategori);
-route.use('/asisten', authMiddleware.authorizeRole('asisten'), routeAsisten);
-route.use('/modul', authMiddleware.authorizeRole('siswa'), routeModul);
+route.use('/sekolah', routeSekolah);
+route.use('/kategori', routeKategori);
+route.use('/asisten', routeAsisten);
+route.use('/modul', routeModul);
+
 route.use('/role', routeRole);
 route.use('/siswa', routeSiswa);
 

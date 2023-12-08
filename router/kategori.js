@@ -9,9 +9,9 @@ const authMiddleware = require('../middleware/authMiddleware');
 routeKategori.use(authMiddleware.authenticateUser);
 
 // Apply role-based authorization middleware for specific routes
-routeKategori.post('/create', authMiddleware.authorizeRole('admin'), kategoriController.create);
-routeKategori.get('/get', authMiddleware.authorizeRole('admin'), kategoriController.getAll);
-routeKategori.get('/get/:id', authMiddleware.authorizeRole('admin'), kategoriController.getById);
+routeKategori.post('/create', authMiddleware.authorizeRole('admin, asisten'), kategoriController.create);
+routeKategori.get('/get', authMiddleware.authorizeRole('admin', 'asisten'), kategoriController.getAll);
+routeKategori.get('/get/:id', authMiddleware.authorizeRole('admin', 'asisten'), kategoriController.getById);
 routeKategori.put('/update/:id', authMiddleware.authorizeRole('admin'), kategoriController.update);
 routeKategori.delete('/delete/:id', authMiddleware.authorizeRole('admin'), kategoriController.delete);
 
