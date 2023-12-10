@@ -59,5 +59,19 @@ authMiddleware.authorizeRole = (...requiredRoles) => {
   };
 };
 
+// authMiddleware.js
+
+// ... (existing code)
+
+authMiddleware.isTokenBlacklisted = (req, res, next) => {
+  const { user } = req;
+  if (user && global.blacklistedTokens && global.blacklistedTokens.includes(req.header('Authorization').replace('Bearer ', ''))) {
+    return res.status(401).json({ error: 'Unauthorized: Token has been blacklisted' });
+  }
+  next();
+};
+
+// ... (existing code)
+
 
 module.exports = authMiddleware;
