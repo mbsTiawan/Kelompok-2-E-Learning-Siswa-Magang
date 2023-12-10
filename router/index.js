@@ -1,3 +1,5 @@
+// index.js
+
 const express = require('express');
 const authController = require('../controller/authController');
 const exampleController = require("../controller/exampleController");
@@ -13,6 +15,7 @@ const route = express.Router();
 
 route.use('/auth', authRoutes);
 route.use(authMiddleware.authenticateUser);
+route.use(authMiddleware.isTokenBlacklisted); // Add this middleware to check for blacklisted tokens
 
 route.get("/", exampleController.index);
 route.use('/sekolah', routeSekolah);

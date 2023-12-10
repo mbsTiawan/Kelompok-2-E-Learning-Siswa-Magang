@@ -48,4 +48,27 @@ authController.register = async (req, res) => {
   }
 };
 
+// authController.js
+
+// ... (existing code)
+
+authController.logout = async (req, res) => {
+  try {
+    // You may need to implement a session management system or token blacklist here
+    // For simplicity, let's assume you are using a token blacklist array
+    const { user } = req;
+    // Assuming you have a global array to store blacklisted tokens
+    // Note: In a production environment, use a more secure storage solution
+    global.blacklistedTokens = global.blacklistedTokens || [];
+    global.blacklistedTokens.push(req.header('Authorization').replace('Bearer ', ''));
+    res.json({ message: 'Logout successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// ... (existing code)
+
+
 module.exports = authController;
