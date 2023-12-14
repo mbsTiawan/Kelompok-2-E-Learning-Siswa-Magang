@@ -11,6 +11,7 @@ const routeModul = require('./modul');
 const routeRole = require("./role");
 const routeSiswa = require("./siswa");
 const authMiddleware = require('../middleware/authMiddleware');
+const routeLogbookSiswa = require('./logbookSiswa');
 const route = express.Router();
 
 route.use('/auth', authRoutes);
@@ -25,5 +26,6 @@ route.use('/modul', routeModul);
 
 route.use('/role', routeRole);
 route.use('/siswa', routeSiswa);
+route.use('/logbookSiswa', routeLogbookSiswa);
 
 module.exports = route;

@@ -153,6 +153,7 @@ asistenController.update = async (req, res) => {
         id,
       },
     });
+    
     if (getAsistenById === null) {
       return res.status(404).json({
         message: "Data Tidak Ditemukan!",

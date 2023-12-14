@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User, Role } = require('../models');
+const { User, Role, Siswa } = require('../models');
 
 const authController = {};
 
@@ -16,7 +16,24 @@ authController.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
+    const siswa = await Siswa.findOne({
+      where: {
+        id_user: user.id
+      }
+    })
+
+    let siswaId = null;
+    if (siswa) {
+      siswaId = siswa.id
+    }
+
+    console.log(siswaId);
     const payload = { username: user.userName, role: user.role.nama_role };
+
+    if (siswaId !== null) {
+      payload.siswaId = siswaId
+    }
+
     const accessToken = jwt.sign(payload, 'your_secret_key', { expiresIn: '1h' });
 
     res.json({
