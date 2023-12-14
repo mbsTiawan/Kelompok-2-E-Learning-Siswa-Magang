@@ -14,7 +14,7 @@ routeAsisten.post(
   asistenController.create
 );
 routeAsisten.get(
-  "/:role",
+  "/role/:role",
   authMiddleware.authorizeRole("admin"),
   asistenController.getByRole
 );

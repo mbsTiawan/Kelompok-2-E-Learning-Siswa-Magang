@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { User, Role, Siswa } = require('../models');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const { User, Role, Siswa, Asisten } = require("../models");
 
 const authController = {};
 
@@ -9,40 +9,54 @@ authController.login = async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({
       where: { userName: username },
-      include: [{ model: Role, as: 'role' }],
+      include: [{ model: Role, as: "role" }],
     });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: "Invalid username or password" });
     }
 
     const siswa = await Siswa.findOne({
       where: {
-        id_user: user.id
-      }
-    })
+        id_user: user.id,
+      },
+    });
+
+    const asisten = await Asisten.findOne({
+      where: {
+        id_user: user.id,
+      },
+    });
 
     let siswaId = null;
+    let asistenId = null;
     if (siswa) {
-      siswaId = siswa.id
+      siswaId = siswa.id;
+    } else if (asisten) {
+      asistenId = asisten.id;
     }
 
     console.log(siswaId);
     const payload = { username: user.userName, role: user.role.nama_role };
 
     if (siswaId !== null) {
-      payload.siswaId = siswaId
+      payload.siswaId = siswaId;
+    } else if (asistenId !== null) {
+      payload.asistenId = asistenId;
     }
 
-    const accessToken = jwt.sign(payload, 'your_secret_key', { expiresIn: '1h' });
+    const accessToken = jwt.sign(payload, "your_secret_key", {
+      expiresIn: "1h",
+    });
 
     res.json({
-      message: 'Login successful. Copy the following token to access based on your role:',
-      accessToken
+      message:
+        "Login successful. Copy the following token to access based on your role:",
+      accessToken,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 authController.register = async (req, res) => {
@@ -52,16 +66,20 @@ authController.register = async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ where: { userName: username } });
     if (existingUser) {
-      return res.status(400).json({ error: 'Username is already taken' });
+      return res.status(400).json({ error: "Username is already taken" });
     }
 
     // Create a new user
-    const newUser = await User.create({ userName: username, password, id_role });
+    const newUser = await User.create({
+      userName: username,
+      password,
+      id_role,
+    });
 
-    res.json({ message: 'User registered successfully' });
+    res.json({ message: "User registered successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -77,15 +95,16 @@ authController.logout = async (req, res) => {
     // Assuming you have a global array to store blacklisted tokens
     // Note: In a production environment, use a more secure storage solution
     global.blacklistedTokens = global.blacklistedTokens || [];
-    global.blacklistedTokens.push(req.header('Authorization').replace('Bearer ', ''));
-    res.json({ message: 'Logout successful' });
+    global.blacklistedTokens.push(
+      req.header("Authorization").replace("Bearer ", "")
+    );
+    res.json({ message: "Logout successful" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 // ... (existing code)
-
 
 module.exports = authController;
