@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Logbook_Pembelajaran extends Model {
     /**
@@ -11,22 +9,31 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Logbook_Pembelajaran.belongsTo(models.Materi_Mentoring, {
+        foreignkey: "id_materi",
+      });
+      Logbook_Pembelajaran.belongsTo(models.Asisten, {
+        foreignKey: "id_asisten",
+      });
     }
   }
-  Logbook_Pembelajaran.init({
-    id_materi: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'Materi_Mentorings',
-        key: 'id'
-      }
+  Logbook_Pembelajaran.init(
+    {
+      id_materi: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Materi_Mentorings",
+          key: "id",
+        },
+      },
+      deskripsi: DataTypes.STRING,
+      catatan: DataTypes.STRING,
+      tanggal: DataTypes.DATE,
     },
-    deskripsi: DataTypes.STRING,
-    catatan: DataTypes.STRING,
-    tanggal: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'Logbook_Pembelajaran',
-  });
+    {
+      sequelize,
+      modelName: "Logbook_Pembelajaran",
+    }
+  );
   return Logbook_Pembelajaran;
 };

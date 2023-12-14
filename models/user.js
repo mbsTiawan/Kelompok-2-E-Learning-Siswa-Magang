@@ -1,11 +1,12 @@
 "use strict";
 const { Model } = require("sequelize");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      User.belongsTo(models.Role, { foreignKey: 'id_role', as: 'role' });
+      User.belongsTo(models.Role, { foreignKey: "id_role", as: "role" });
+      User.hasOne(models.Asisten, { foreignKey: "id_user", as: "asisten" });
     }
   }
 
@@ -29,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.addHook('beforeCreate', async (user) => {
+  User.addHook("beforeCreate", async (user) => {
     // Generate and store password salt securely
     const saltRounds = 10;
     user.passwordSalt = await bcrypt.genSalt(saltRounds);

@@ -1,18 +1,27 @@
-const { Asisten, User } = require("../models");
+const { Op } = require("sequelize");
+const { Asisten, User, Role } = require("../models");
 
 const asistenController = {};
 
 asistenController.create = async (req, res) => {
-
   try {
-
-    const { id_user, nim, nama, alamat, kelas, no_hp, tanggal_masuk, shift, image } = req.body;
+    const {
+      id_user,
+      nim,
+      nama,
+      alamat,
+      kelas,
+      no_hp,
+      tanggal_masuk,
+      shift,
+      image,
+    } = req.body;
 
     const findUser = await User.findOne({
       where: {
-        id: id_user
-      }
-    })
+        id: id_user,
+      },
+    });
 
     if (!findUser) {
       return res.status(404).json({
@@ -33,6 +42,12 @@ asistenController.create = async (req, res) => {
     ) {
       return res.status(400).json({
         message: "Field tidak boleh kosong!",
+      });
+    }
+    // validasi shift
+    if (shift !== "pagi" && shift !== "siang") {
+      return res.status(400).json({
+        message: "Shift hanya boleh diisi dengan 'pagi' atau 'siang'!",
       });
     }
 
@@ -62,10 +77,9 @@ asistenController.create = async (req, res) => {
 
     return res.status(201).json({
       message: "Data berhasil ditambahkan !",
-      data: createAsisten
+      data: createAsisten,
     });
   } catch (error) {
-
     return res.status(500).json({
       message: "Terjadi kesalahan pada server.",
     });
@@ -120,8 +134,18 @@ asistenController.getById = async (req, res) => {
 
 asistenController.update = async (req, res) => {
   try {
-    const { id_user, nim, nama, alamat, kelas, no_hp, tanggal_masuk, shift, image } =
-      req.body;
+    const {
+      id_user,
+      nim,
+      nama,
+      alamat,
+      kelas,
+      no_hp,
+      tanggal_masuk,
+      shift,
+      image,
+    } = req.body;
+
     const { id } = req.params;
 
     const getAsistenById = await Asisten.findOne({
@@ -135,19 +159,8 @@ asistenController.update = async (req, res) => {
       });
     }
 
-    const findUser = await User.findOne({
-      where: {
-        id: id_user
-      }
-    })
-
-    if (!findUser) {
-      return res.status(404).json({
-        message: "Data user tidak ditemukan !",
-      });
-    }
-
     if (
+      !id_user ||
       !nim ||
       !nama ||
       !alamat ||
@@ -159,6 +172,21 @@ asistenController.update = async (req, res) => {
     ) {
       return res.status(400).json({
         message: "Field tidak boleh kosong!",
+      });
+    }
+    // jika nim sudah digunakan
+    const isNimTaken = await Asisten.findOne({
+      where: {
+        nim,
+        id: {
+          [Op.not]: id, // kecualikan nim yang sedang/akan diupdate
+        },
+      },
+    });
+
+    if (isNimTaken) {
+      return res.status(400).json({
+        message: "NIM sudah digunakan!",
       });
     }
 
@@ -218,6 +246,35 @@ asistenController.deleteById = async (req, res) => {
     return res.status(500).json({
       message: error,
     });
+  }
+};
+
+asistenController.getByRole = async (req, res) => {
+  try {
+    const { role } = req.params;
+
+    const roleData = await Role.findOne({
+      where: { nama_role: role },
+      include: {
+        model: User,
+        as: "users",
+        include: {
+          model: Asisten,
+          as: "asisten",
+        },
+      },
+    });
+
+    if (!roleData) {
+      return res.status(404).json({ message: "Role tidak ditemukan!" });
+    }
+
+    const asistenData = roleData.users.map((user) => user.asisten);
+
+    return res.status(200).json(asistenData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
