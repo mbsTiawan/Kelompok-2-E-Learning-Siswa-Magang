@@ -17,7 +17,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id_asisten",
       });
 
-      Asisten.hasMany(models.Modul, {
+      Asisten.belongsTo(models.User, {
+        foreignKey: "id_user",
+        as: "user",
+      });
+
+      Asisten.hasMany(models.Logbook_Pembelajaran, {
         foreignKey: "id_asisten",
       });
     }
