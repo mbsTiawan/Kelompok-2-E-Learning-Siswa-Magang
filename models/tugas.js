@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Tugas.belongsTo(models.Siswa, {
+        foreignKey: 'id_siswa'
+      })
     }
   }
   Tugas.init({

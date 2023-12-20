@@ -14,6 +14,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const routeLogbookSiswa = require("./logbookSiswa");
 const routeLogbookPembelajaran = require("./logbookAsisten");
 const routeMateri = require("./materiMentoing");
+const routeTugas = require("./tugas");
 const route = express.Router();
 
 route.use("/auth", authRoutes);
@@ -29,7 +30,8 @@ route.use("/modul", routeModul);
 route.use("/role", routeRole);
 route.use("/siswa", routeSiswa);
 route.use("/logbookSiswa", routeLogbookSiswa);
-route.use("/logbook_asisten", routeLogbookPembelajaran);
+route.use("/logbookAsisten", routeLogbookPembelajaran);
 route.use("/materi", routeMateri);
+route.use("/tugas", routeTugas);
 
 module.exports = route;
