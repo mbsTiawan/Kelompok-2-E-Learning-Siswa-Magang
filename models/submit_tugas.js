@@ -1,16 +1,14 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Submit_Tugas extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Submit_Tugas.belongsTo(models.Tugas, {
+        foreignKey: 'id_tugas'
+      });
+      Submit_Tugas.belongsTo(models.Siswa, {
+        foreignKey: 'id_siswa'
+      });
     }
   }
   Submit_Tugas.init({

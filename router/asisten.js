@@ -38,5 +38,17 @@ routeAsisten.delete(
   authMiddleware.authorizeRole("admin"),
   asistenController.deleteById
 );
+// ...
+
+
+
+routeAsisten.get(
+  "/get-all-submitted-tugas",
+  authMiddleware.authorizeRole("admin", "asisten"),
+  asistenController.getAllSubmittedTugas
+);
+
+// ...
+
 
 module.exports = routeAsisten;

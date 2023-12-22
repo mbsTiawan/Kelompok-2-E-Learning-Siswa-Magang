@@ -1,6 +1,7 @@
 // index.js
 
 const express = require("express");
+const routeSubmitTugas = require("./SubmitTugas"); // Import the new route
 const authController = require("../controller/authController");
 const exampleController = require("../controller/exampleController");
 const authRoutes = require("./auth");
@@ -27,11 +28,13 @@ route.use("/kategori", routeKategori);
 route.use("/asisten", routeAsisten);
 route.use("/modul", routeModul);
 
+// ...
+
 route.use("/role", routeRole);
 route.use("/siswa", routeSiswa);
 route.use("/logbookSiswa", routeLogbookSiswa);
 route.use("/logbookAsisten", routeLogbookPembelajaran);
 route.use("/materi", routeMateri);
 route.use("/tugas", routeTugas);
-
+route.use("/submit-tugas", routeSubmitTugas); // Add this line
 module.exports = route;

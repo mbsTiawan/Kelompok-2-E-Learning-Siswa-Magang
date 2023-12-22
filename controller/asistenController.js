@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Asisten, User, Role } = require("../models");
+const { Asisten, User, Role, Submit_Tugas, Tugas } = require('../models');
 
 const asistenController = {};
 
@@ -277,5 +277,40 @@ asistenController.getByRole = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// ...
+
+
+
+asistenController.getAllSubmittedTugas = async (req, res) => {
+  try {
+    const submittedTugas = await Submit_Tugas.findAll({
+      include: [
+        {
+          model: Tugas,
+        },
+      ],
+    });
+
+    if (!submittedTugas) {
+      return res.status(404).json({
+        message: 'Tidak ada tugas yang telah disubmit!',
+      });
+    }
+
+    return res.status(200).json({
+      data: submittedTugas,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Terjadi kesalahan pada server.',
+    });
+  }
+};
+
+// ...
+
+
 
 module.exports = asistenController;
