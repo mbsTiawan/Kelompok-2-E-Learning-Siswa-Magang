@@ -16,6 +16,7 @@ const routeLogbookSiswa = require("./logbookSiswa");
 const routeLogbookPembelajaran = require("./logbookAsisten");
 const routeMateri = require("./materiMentoing");
 const routeTugas = require("./tugas");
+const routeAbsensi = require("./absensi");
 const route = express.Router();
 
 route.use("/auth", authRoutes);
@@ -37,4 +38,5 @@ route.use("/logbookAsisten", routeLogbookPembelajaran);
 route.use("/materi", routeMateri);
 route.use("/tugas", routeTugas);
 route.use("/submit-tugas", routeSubmitTugas); // Add this line
+route.use("/absensi", routeAbsensi);
 module.exports = route;
