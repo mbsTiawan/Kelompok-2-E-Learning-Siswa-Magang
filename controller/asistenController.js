@@ -311,6 +311,41 @@ asistenController.getAllSubmittedTugas = async (req, res) => {
 
 // ...
 
+// ...
+
+asistenController.getSubmittedTugasByTugasId = async (req, res) => {
+  try {
+    const { id_tugas } = req.params;
+
+    const submittedTugas = await Submit_Tugas.findAll({
+      where: {
+        id_tugas: id_tugas,
+      },
+      include: [
+        {
+          model: Tugas,
+        },
+      ],
+    });
+
+    if (!submittedTugas || submittedTugas.length === 0) {
+      return res.status(404).json({
+        message: 'Tidak ada tugas yang telah disubmit untuk tugas ini!',
+      });
+    }
+
+    return res.status(200).json({
+      data: submittedTugas,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Terjadi kesalahan pada server.',
+    });
+  }
+};
+
+// ...
 
 
 module.exports = asistenController;
