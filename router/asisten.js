@@ -50,5 +50,10 @@ routeAsisten.get(
 
 // ...
 
+routeAsisten.get(
+  "/get-submitted-tugas/:id_tugas",
+  authMiddleware.authorizeRole("admin", "asisten"),
+  asistenController.getSubmittedTugasByTugasId
+);
 
 module.exports = routeAsisten;
