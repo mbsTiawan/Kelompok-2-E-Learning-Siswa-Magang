@@ -13,26 +13,6 @@ const getToken = (token) => {
   }
 };
 
-const isAlreadyAbsenToday = async (idSiswa) => {
-  try {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
-
-    const existingAbsensi = await Absensi.findOne({
-      id_siswa: idSiswa,
-      waktu_absen: { $gte: todayStart, $lt: todayEnd },
-    });
-
-    return !!existingAbsensi; // Mengembalikan true jika sudah absen hari ini, false jika belum
-  } catch (error) {
-    console.error("Error checking existing absensi:", error);
-    return false;
-  }
-};
-
 absensiController.create = async (req, res) => {
   const authorizationHeader = req.header("Authorization");
   const token = authorizationHeader.replace("Bearer ", "");
@@ -49,14 +29,6 @@ absensiController.create = async (req, res) => {
       });
     }
 
-    const hasAlreadyAbsenToday = await isAlreadyAbsenToday(idSiswa);
-
-    if (hasAlreadyAbsenToday) {
-      return res.status(400).json({
-        message: "Anda sudah melakukan absensi hari ini.",
-      });
-    }
-
     const createAbsensi = await Absensi.create({
       id_siswa: idSiswa,
       waktu_absen: Date.now(),
@@ -67,9 +39,10 @@ absensiController.create = async (req, res) => {
       data: createAbsensi,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error creating absensi:", error);
     return res.status(500).json({
       message: "Terjadi kesalahan pada server.",
+      error: error.message,
     });
   }
 };
@@ -80,6 +53,7 @@ absensiController.getBySiswa = async (req, res) => {
   const idSiswa = getToken(token);
   try {
     const getAbsensi = await Absensi.findAll({
+      order: [["createdAt", "DESC"]],
       where: {
         id_siswa: idSiswa,
       },
@@ -104,6 +78,7 @@ absensiController.getByIdSiswa = async (req, res) => {
   try {
     const { id_siswa } = req.params;
     const getAbsensi = await Absensi.findOne({
+      order: [["createdAt", "DESC"]],
       where: {
         id_siswa,
       },
@@ -141,29 +116,30 @@ absensiController.getByIdSiswa = async (req, res) => {
 };
 
 absensiController.update = async (req, res) => {
-  //   const authorizationHeader = req.header("Authorization");
-  //   const token = authorizationHeader.replace("Bearer ", "");
-  //   const idSiswa = getToken(token);
   try {
     const { id } = req.params;
     const { id_siswa, waktu_absen } = req.body;
-    const getAbsensi = await Absensi.findAll({
+    const getAbsensiById = await Absensi.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!getAbsensiById) {
+      return res.status(404).json({
+        message: "Data tidak tersedia",
+      });
+    }
+
+    const getAbsensi = await Absensi.findOne({
       where: {
         id_siswa,
       },
     });
     if (!getAbsensi) {
       return res.status(404).json({
-        message: "Data tidak tersedia",
+        message: "Data siswa tidak tersedia",
       });
     }
-
-    // const dataAbsensi = getAbsensi.find((data) => data.id === id);
-    // if (!dataAbsensi) {
-    //     return res.status(404).json({
-    //         message: `Data Absensi dengan ID ${id} tidak ditemukan`
-    //     });
-    // }
 
     const updateAbsensi = await Absensi.update(
       {
@@ -203,8 +179,11 @@ absensiController.delete = async (req, res) => {
 
     const deleteAbsensi = await Absensi.destroy({
       where: {
-        id,
+        id: id,
       },
+    });
+    return res.status(200).json({
+      data: "Data Berhasil Dihapus!",
     });
   } catch (error) {
     console.log(error);
